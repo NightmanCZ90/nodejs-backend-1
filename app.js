@@ -40,6 +40,7 @@ Cart.belongsTo(User)
 Cart.belongsToMany(Product, { through: CartItem })
 Product.belongsToMany(Cart, { through: CartItem })
 
+let fetchedUser
 sequelize.sync()
   // Create dummy user
   .then(result => {
@@ -52,9 +53,13 @@ sequelize.sync()
     return Promise.resolve(user)
   })
   .then(user => {
-    return user.createCart()
+    fetchedUser = user
+    return user.getCart()
   })
   .then(cart => {
+    if (!cart) {
+      fetchedUser.createCart()
+    }
     app.listen(3090)
   })
   .catch(err => {
