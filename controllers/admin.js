@@ -54,15 +54,14 @@ exports.postEditProduct = (req, res, next) => {
     .catch(err => console.log(err))
 }
 
-// exports.postDeleteProduct = (req, res, next) => {
-//   const { productId } = req.body
-//   Product.destroy({ where: { id: productId } })
-//     .then(result => {
-//       console.log('Destroyed Product')
-//       res.redirect('/admin/products')
-//     })
-//     .catch(err => console.log(err))
-// }
+exports.postDeleteProduct = (req, res, next) => {
+  const { productId } = req.body
+  Product.deleteById(productId)
+    .then(() => {
+      res.redirect('/admin/products')
+    })
+    .catch(err => console.log(err))
+}
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll()
