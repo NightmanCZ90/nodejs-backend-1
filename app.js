@@ -16,14 +16,14 @@ const shopRoutes = require('./routes/shop')
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
-// app.use((req, res, next) => {
-//   User.findById('61ad468bc85fe7d141346918')
-//     .then(user => {
-//       req.user = new User(user.name, user.email, user.cart, user._id)
-//       next()
-//     })
-//     .catch(err => console.log(err))
-// })
+app.use((req, res, next) => {
+  User.findById('61b27c51c7fba797a6eba528')
+    .then(user => {
+      req.user = user
+      next()
+    })
+    .catch(err => console.log(err))
+})
 
 app.use('/admin', adminRoutes)
 app.use(shopRoutes)
@@ -32,6 +32,18 @@ app.use(errorController.get404)
 
 mongoose.connect('mongodb+srv://NightmanCZ90:<password>@cluster0.a0hh5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
   .then(result => {
+    User.findOne().then(user => {
+      if (!user) {
+        const user = new User({
+          name: 'Jan',
+          email: 'jannovak@gmail.com',
+          cart: {
+            items: []
+          }
+        })
+        user.save()
+      }
+    })
     console.log('Connected!')
     app.listen(3090)
   })
