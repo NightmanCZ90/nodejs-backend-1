@@ -1,8 +1,8 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 const path = require('path')
 const errorController = require('./controllers/error')
-const mongoConnect = require('./util/database').mongoConnect
 const User = require('./models/user')
 
 const app = express()
@@ -30,6 +30,9 @@ app.use(shopRoutes)
 
 app.use(errorController.get404)
 
-mongoConnect(() => {
-  app.listen(3090)
-})
+mongoose.connect('mongodb+srv://NightmanCZ90:<password>@cluster0.a0hh5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+  .then(result => {
+    console.log('Connected!')
+    app.listen(3090)
+  })
+  .catch(err => console.log(err))
