@@ -5,12 +5,13 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
+    isAuthenticated: req.session.isLoggedIn,
   })
 }
 
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, description, price} = req.body
-  const product = new Product({ title, price, description, imageUrl, userId: req.user._id })
+  const product = new Product({ title, price, description, imageUrl, userId: req.user })
   product.save()
     .then(result => {
       console.log('Created Product: ', title)
@@ -38,6 +39,7 @@ exports.getEditProduct = (req, res, next) => {
         path: '/admin/edit-product',
         editing: editMode,
         product,
+        isAuthenticated: req.session.isLoggedIn,
       })
     })
     .catch(err => console.log(err))
@@ -72,6 +74,7 @@ exports.getProducts = (req, res, next) => {
         prods: products,
         pageTitle: 'Admin products',
         path: '/admin/products',
+        isAuthenticated: req.session.isLoggedIn,
       })
     })
     .catch(err => console.log(err))
