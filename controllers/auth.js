@@ -5,7 +5,7 @@ exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
     pageTitle: 'Login',
     path: '/login',
-    errorMessage: req.flash('error')
+    errorMessage: req.flash('error'),
   })
 }
 
@@ -13,6 +13,7 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
+    errorMessage: req.flash('error'),
   })
 }
 
@@ -36,6 +37,7 @@ exports.postLogin = (req, res, next) => {
               res.redirect('/')
             })
           }
+          req.flash('error', 'Invalid email or password')
           res.redirect('/login')
         })
         .catch(err => {
@@ -51,7 +53,7 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email })
     .then(userDoc => {
       if (userDoc) {
-        // TODO: notify user that user already exists
+        req.flash('error', 'Email already exists. Please pick a different email.')
         return res.redirect('/signup')
       }
       return bcrypt.hash(password, 12)
