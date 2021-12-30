@@ -13,7 +13,8 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-  const { title, imageUrl, description, price} = req.body;
+  const { title, description, price} = req.body;
+  const image = req.file;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -24,7 +25,7 @@ exports.postAddProduct = (req, res, next) => {
       hasError: true,
       product: {
         title,
-        imageUrl,
+        image,
         price,
         description,
       },
@@ -33,7 +34,7 @@ exports.postAddProduct = (req, res, next) => {
     })
   }
 
-  const product = new Product({ title, price, description, imageUrl, userId: req.user })
+  const product = new Product({ title, price, description, image, userId: req.user })
   product.save()
     .then(result => {
       console.log('Created Product: ', title)
@@ -47,7 +48,7 @@ exports.postAddProduct = (req, res, next) => {
         hasError: true,
         product: {
           title,
-          imageUrl,
+          image,
           price,
           description,
         },
@@ -87,7 +88,7 @@ exports.getEditProduct = (req, res, next) => {
 }
 
 exports.postEditProduct = (req, res, next) => {
-  const { productId, title, price, imageUrl, description } = req.body
+  const { productId, title, price, image, description } = req.body
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -99,7 +100,7 @@ exports.postEditProduct = (req, res, next) => {
       product: {
         _id: productId,
         title,
-        imageUrl,
+        image,
         price,
         description,
       },
@@ -113,7 +114,7 @@ exports.postEditProduct = (req, res, next) => {
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect('/')
       }
-      return product.update({ title, price, description, imageUrl })
+      return product.update({ title, price, description, image })
         .then(result => {
           console.log('Updated Product')
           res.redirect('/admin/products')

@@ -11,7 +11,7 @@
       <div class="user-message user-message--error"><%= errorMessage %></div>
     <% } %>
 
-    <form class="product-form" action="/admin/<%= editing ? 'edit-product' : 'add-product' %>" method="POST">
+    <form class="product-form" action="/admin/<%= editing ? 'edit-product' : 'add-product' %>" method="POST" enctype="multipart/form-data">
 
       <div class="form-control">
         <label for="title">Title</label>
