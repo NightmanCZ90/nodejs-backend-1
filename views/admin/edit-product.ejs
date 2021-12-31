@@ -7,7 +7,7 @@
   <%- include('../includes/navigation.ejs') %>
 
   <main>
-    <% if (errorMessage.length) { %>
+    <% if (errorMessage?.length) { %>
       <div class="user-message user-message--error"><%= errorMessage %></div>
     <% } %>
 
@@ -62,9 +62,7 @@
           name="description"
           id="description"
           rows="5"
-        >
-        <%= (editing || hasError) ? product.description : '' %>
-        </textarea>
+        ><%= (editing || hasError) ? product.description : '' %></textarea>
       </div>
       <% if (editing) { %>
         <input type="hidden" value="<%= product._id %>" name="productId">

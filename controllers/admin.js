@@ -17,6 +17,22 @@ exports.postAddProduct = (req, res, next) => {
   const image = req.file;
   const errors = validationResult(req);
 
+  if (!image) {
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/add-product',
+      editing: false,
+      hasError: true,
+      product: {
+        title,
+        price,
+        description,
+      },
+      errorMessage: 'Attached file is of incorrect type. Must be an image type .png, .jpg, .jpeg.',
+      validationErrors: [],
+    })
+  }
+
   if (!errors.isEmpty()) {
     return res.status(422).render('admin/edit-product', {
       pageTitle: 'Add Product',
@@ -25,7 +41,6 @@ exports.postAddProduct = (req, res, next) => {
       hasError: true,
       product: {
         title,
-        image,
         price,
         description,
       },
@@ -34,7 +49,9 @@ exports.postAddProduct = (req, res, next) => {
     })
   }
 
-  const product = new Product({ title, price, description, image, userId: req.user })
+  const imageUrl = image.path;
+
+  const product = new Product({ title, price, description, imageUrl, userId: req.user })
   product.save()
     .then(result => {
       console.log('Created Product: ', title)
@@ -48,7 +65,7 @@ exports.postAddProduct = (req, res, next) => {
         hasError: true,
         product: {
           title,
-          image,
+          imageUrl,
           price,
           description,
         },
@@ -88,7 +105,8 @@ exports.getEditProduct = (req, res, next) => {
 }
 
 exports.postEditProduct = (req, res, next) => {
-  const { productId, title, price, image, description } = req.body
+  const { productId, title, price, description } = req.body;
+  const image = req.file;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -100,7 +118,6 @@ exports.postEditProduct = (req, res, next) => {
       product: {
         _id: productId,
         title,
-        image,
         price,
         description,
       },
@@ -114,7 +131,14 @@ exports.postEditProduct = (req, res, next) => {
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect('/')
       }
-      return product.update({ title, price, description, image })
+      if (image) {
+        return product.update({ title, price, description, imageUrl: image.path })
+          .then(result => {
+            console.log('Updated Product')
+            res.redirect('/admin/products')
+          })
+      }
+      return product.update({ title, price, description })
         .then(result => {
           console.log('Updated Product')
           res.redirect('/admin/products')
