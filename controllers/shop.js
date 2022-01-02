@@ -156,6 +156,28 @@ exports.postOrder = (req, res, next) => {
     })
 }
 
+exports.getCheckout = (req, res, next) => {
+  req.user.populate('cart.items.productId')
+    .then(user => {
+      const products = user.cart.items;
+      let total = 0;
+      products.forEach(p => {
+        total += p.quantity * p.productId.price;
+      })
+      res.render('shop/checkout', {
+        pageTitle: 'Checkout',
+        path: '/checkout',
+        products: products,
+        totalSum: total,
+      })
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}
+
 exports.getOrders = (req, res, next) => {
   Order.find({ 'user.userId': req.user._id })
     .then(orders => {
@@ -221,13 +243,4 @@ exports.getInvoice = (req, res, next) => {
       // file.pipe(res);
     })
     .catch(err => next(err));
-}
-
-exports.getCheckout = (req, res, next) => {
-  Product.fetchAll((products) => {
-    res.render('shop/checkout', {
-      pageTitle: 'Checkout',
-      path: '/checkout',
-    })
-  })
 }
