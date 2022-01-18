@@ -3,3 +3,4 @@ data/products.json
 data/cart.json
 data/invoices
 images
+.env

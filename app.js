@@ -9,8 +9,11 @@ const multer = require('multer');
 const path = require('path')
 const errorController = require('./controllers/error')
 const User = require('./models/user')
+const dotenv = require('dotenv');
 
-const MONGODB_URI = 'mongodb+srv://NightmanCZ90:<password>@cluster0.a0hh5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+dotenv.config();
+
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.a0hh5.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`
 
 const app = express()
 const store = new MongoDBStore({
@@ -90,6 +93,6 @@ app.use(errorController.get404)
 mongoose.connect(MONGODB_URI)
   .then(result => {
     console.log('Connected!')
-    app.listen(3090)
+    app.listen(process.env.PORT || 3090)
   })
   .catch(err => console.log(err))
